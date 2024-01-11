@@ -158,3 +158,31 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+botenv/Include/site/python3.12/greenlet/greenlet.h
+botenv/pyvenv.cfg
+botenv/Scripts/activate
+botenv/Scripts/activate.bat
+botenv/Scripts/Activate.ps1
+botenv/Scripts/deactivate.bat
+botenv/Scripts/get_company.py
+botenv/Scripts/pip3.exe
+botenv/Scripts/pip3.12.exe
+botenv/Scripts/pip.exe
+botenv/Scripts/get_first_company.py
+botenv/Scripts/get_first_movie.py
+botenv/Scripts/get_first_person.py
+botenv/Scripts/get_keyword.py
+botenv/Scripts/get_person.py
+botenv/Scripts/get_top_bottom_movies.py
+botenv/Scripts/httpx.exe
+botenv/Scripts/imdbpy.exe
+botenv/Scripts/imdbpy2sql.py
+botenv/Scripts/python.exe
+botenv/Scripts/pythonw.exe
+botenv/Scripts/s32cinemagoer.py
+botenv/Scripts/search_company.py
+botenv/Scripts/search_keyword.py
+botenv/Scripts/search_movie.py
+botenv/Scripts/search_person.py
+botenv/Scripts/get_movie_list.py
+botenv/Scripts/get_movie.py
