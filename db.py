@@ -9,8 +9,7 @@ def create_database():
         CREATE TABLE IF NOT EXISTS films (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             film TEXT,
-            user_id INTEGER,
-            CONSTRAINT unique_film UNIQUE (film)
+            user_id INTEGER
         )
     ''')
     
