@@ -4,17 +4,8 @@ import sqlite3
 import random
 from telegram import Update
 from telegram.ext import ContextTypes
-from tmdbv3api import TMDb, Movie
 
 from basekeyboard import text_help
-
-
-tmdb = TMDb()
-tmdb.api_key = "95982a3f170dcc7789a72455024860b2"
-tmdb.language = 'ru'
-movie = Movie()
-
-#вынесение повторющегося текста в отдельную переменную
 
 
 async def random_film(update: Update, context: ContextTypes.DEFAULT_TYPE):

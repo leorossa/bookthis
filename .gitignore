@@ -188,3 +188,5 @@ botenv/Scripts/get_movie_list.py
 botenv/Scripts/get_movie.py
 films.db
 testcode.py
+botenv/Scripts/normalizer.exe
+tmdb.py
