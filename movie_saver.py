@@ -4,9 +4,13 @@ import sqlite3
 from telegram import Update
 from telegram.ext import ContextTypes
 
+from basekeyboard import reply_details_keyboard
+
 
 async def savefilm(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    film = context.user_data["film"] #Получаем название фильма из user_data после нажатия кнопки Сохранить
+    if 'title' in context.user_data: #Если в user_data есть название фильма
+        film = context.user_data['title'] #Получаем название фильма из user_data после нажатия кнопки Сохранить
+    context.user_data['overview_movies'] = film
     conn = sqlite3.connect('films.db') #Подключаемся к базе данных
     cursor = conn.cursor() #Создаем курсор
 
@@ -22,13 +26,17 @@ async def savefilm(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 cursor.execute('INSERT INTO films (user_id,film) VALUES (?, ?)',
                                 (update.effective_user.id, film))
                 conn.commit() #Сохраняем изменения
-                await context.bot.send_message(chat_id=update.effective_chat.id, text="Фильм сохранен")
+                await context.bot.send_message(chat_id=update.effective_chat.id,\
+                                                text="Фильм "+film+" сохранен",\
+                                                reply_markup=reply_details_keyboard)
             else:
-                await context.bot.send_message(chat_id=update.effective_chat.id, text="Фильм уже сохранен")
+                await context.bot.send_message(chat_id=update.effective_chat.id,\
+                                                text="Фильм "+film+" уже сохранен",\
+                                                reply_markup=reply_details_keyboard)
         
         else:
             await context.bot.send_message(chat_id=update.effective_chat.id, text="Фильм не найден")
-    except Exception as e:
+    except Exception:
         conn.rollback() #Откатываемся в случае ошибки
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Неизвестная ошибка при сохранении фильма\
                                         Посмотри в movie_saver")
