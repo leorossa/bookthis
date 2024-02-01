@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from tmdbv3api import TMDb, Movie
 
-from basekeyboard import reply_rec_second_keyboard, reply_save_pon_keyboard
+from basekeyboard import reply_rec_second_keyboard, reply_save_pon_keyboard, reply_what_else_keyboard
 
 #Подключаемся к базе imdb
 tmdb = TMDb()
@@ -22,12 +22,12 @@ async def found_films(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 
 async def send_recomendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Создание нового списка рекомендованных фильмов после нажатия Рекомендации"""
+    """Создание нового списка похожих фильмов после нажатия похожие"""
     if 'id' in context.user_data:
         film_id = context.user_data['id']
         context.user_data.clear()
-    recommendations = movie.recommendations(movie_id=film_id) #Поиск рекомендованных фильмов с ограничением на 1 страницу
-    context.user_data['rec_list'] = recommendations
+    similars = movie.similar(movie_id=film_id) #Поиск рекомендованных фильмов с ограничением на 1 страницу
+    context.user_data['rec_list'] = similars
     await create_film_list(update, context)
 
 
@@ -41,30 +41,55 @@ async def send_overwiev(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await create_film_list(update, context)
 
 
+async def send_youtube(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Отправка фильма после рандомного выбора от пользователя"""
+    if 'title' in context.user_data:
+        films = context.user_data['title']
+        
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=films)
+
+
+async def send_popular(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Отправка пользователю популярных фильмов"""
+    context.user_data.clear()
+    popular_films = movie.popular()
+    context.user_data['popular_list'] = popular_films
+    await create_film_list(update, context)
+
+
 async def create_film_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Создание итогового списка для передачи пользователю"""
-    default_popularity = 0
+    """Создание итогового списка из разных источников для передачи пользователю"""
+    max_caption = 950  #Максимальная длина описания фильма 1024 символа
     if 'rec_list' in context.user_data:
         films = context.user_data['rec_list']
     elif 'overwiev_list' in context.user_data:
         films = context.user_data['overwiev_list']
     elif 'search_films' in context.user_data:
         films = context.user_data['search_films']  #Получаем список из введенного сообщения от пользователя
-    else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Не удалось создать список с фильмами")
-    for f in films:
-        if not hasattr(f, 'popularity') or not f.popularity:
-            f.popularity = 0
-        if not hasattr(f, 'release_date') or not f.release_date:
-            f.release_date = "В производстве" #Добавляем дату релиза если ее нет
-        if not hasattr(f, 'poster_path') or not f.poster_path:
-            f.poster_path = 'https://www.hi-fi.ru/upload/medialibrary/5c8/5c87214a87d47f09d36daa4787d65291.jpg'
-        else:
-            f.poster_path = 'https://image.tmdb.org/t/p/w500' + f.poster_path
-    films = sorted(films, key=lambda x: x.popularity, reverse=True) #Сортируем по популярности от большего к меньшему
-    context.user_data['main_list'] = films  #Передаем в контекст для отправки пользователю
+    elif 'popular_list' in context.user_data:
+        films = context.user_data['popular_list']
+    try:
+        for f in films:
+            if isinstance(f, str):
+                await context.bot.send_message(chat_id=update.effective_chat.id, text="Не могу найти, что же делать?")
+                return
+            if not hasattr(f, 'overview') or not f.overview:
+                f.overview = "Нет описания"
+            else:
+                f.overview = f.overview[:max_caption] if len(f.overview) > max_caption else f.overview
+            if not hasattr(f, 'popularity') or not f.popularity:
+                f.popularity = 0
+            if not hasattr(f, 'release_date') or not f.release_date:
+                f.release_date = "В производстве" #Добавляем дату релиза если ее нет
+            if not hasattr(f, 'poster_path') or not f.poster_path:
+                f.poster_path = 'https://www.hi-fi.ru/upload/medialibrary/5c8/5c87214a87d47f09d36daa4787d65291.jpg'
+            else:
+                f.poster_path = 'https://image.tmdb.org/t/p/w500' + f.poster_path
+    except Exception as e:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Произошла ошибка: {e}")
+    #films = sorted(films, key=lambda x: x.popularity, reverse=True) #Сортируем по популярности от большего к меньшему
+    context.user_data['main_list'] = list(films)  #Передаем в контекст для отправки пользователю
     await send_movie(update, context)
-
 
 
 async def send_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -73,7 +98,7 @@ async def send_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     if movies_list: #Если список не пустой
         movies = movies_list[0] #Берем первый элемент
-        reply_markup = reply_rec_second_keyboard if len(movies_list) > 0 else reply_save_pon_keyboard #Выбираем клавиатуру
+        reply_markup = reply_rec_second_keyboard if len(movies_list) > 1 else reply_save_pon_keyboard #Выбираем клавиатуру
         context.user_data['id'] = movies.id 
         context.user_data['title'] = movies.title
         await context.bot.send_photo(chat_id=update.effective_chat.id, photo= movies.poster_path,\
@@ -91,4 +116,5 @@ async def send_next_movie(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if 'main_list' in context.user_data:
         await send_movie(update, context)
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Список с фильмами по этому названию пустой")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Фильмы закончились, попробуй поискать другие!",\
+                                        reply_markup=reply_what_else_keyboard)

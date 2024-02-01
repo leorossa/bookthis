@@ -45,7 +45,7 @@ async def random_film_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 def main() -> None:
     application = ApplicationBuilder().token('5376189132:AAGD207buqYz8yx8xH7EG9BSpQPrqtjW0aM').build()
-    
+
     foundfilms_handler = MessageHandler(~filters.Text("Один случайный фильм")\
                                       & ~filters.Text("Последние 5 добавленных")\
                                       & ~filters.Text("Выбор жанра"), found_films)
@@ -56,9 +56,7 @@ def main() -> None:
     application.add_handler(CallbackQueryHandler(button_handler))
     application.add_handler(CallbackQueryHandler(savefilm_handler))
     application.add_handler(MessageHandler(filters.TEXT, callback=random_film_handler))
-    
 
-    
     application.run_polling()
 
 if __name__ == "__main__":

@@ -1,48 +1,60 @@
 #!/usr/bin/env python
 
-from telegram import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import(
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
 
 """Вариации клавиатур для разных сценариев"""
 start_keyboard = [
     [KeyboardButton("Один случайный фильм")],
     [KeyboardButton("Последние 5 добавленных")],
-    #[KeyboardButton("Выбор жанра")],
 ]
-reply_start_keyboard = ReplyKeyboardMarkup(start_keyboard, one_time_keyboard=False)
+reply_start_keyboard = ReplyKeyboardMarkup(start_keyboard, one_time_keyboard=True)
 
 save_pon_keyboard = [
         [InlineKeyboardButton("Сохранить", callback_data="Сохранить")],
-        [InlineKeyboardButton("Рекомендации", callback_data="Рекомендации")],
-        [InlineKeyboardButton("Понятно", callback_data="Понятно")],
+        [InlineKeyboardButton("Похожее", callback_data="Похожее")],
+        [InlineKeyboardButton("Далее", callback_data="Далее")],
         ]
 reply_save_pon_keyboard = InlineKeyboardMarkup(save_pon_keyboard)
 
 rec_second_keyboard = [
         [InlineKeyboardButton("Сохранить", callback_data="Сохранить")],
-        [InlineKeyboardButton("Рекомендации", callback_data="Рекомендации")],
+        [InlineKeyboardButton("Похожее", callback_data="Похожее")],
         [InlineKeyboardButton("Далее", callback_data="Далее")],
 ]
 reply_rec_second_keyboard = InlineKeyboardMarkup(rec_second_keyboard)
 
 pon_keyboard = [
-        [InlineKeyboardButton("Понятно", callback_data="Понятно")],
+        [InlineKeyboardButton("Закрыть", callback_data="Закрыть")],
 ]
 reply_pon_keyboard = InlineKeyboardMarkup(pon_keyboard)
 
 details_keyboard = [
         [InlineKeyboardButton("Подробнее", callback_data="Подробнее")],
-        [InlineKeyboardButton("Понятно", callback_data="Понятно")],
+        [InlineKeyboardButton("Закрыть", callback_data="Закрыть")],
 ]
 reply_details_keyboard = InlineKeyboardMarkup(details_keyboard)
 
+what_else_keyboard = [
+        [InlineKeyboardButton("Что посмотреть?", callback_data="Что посмотреть?")],
+        [InlineKeyboardButton("Закрыть", callback_data="Закрыть")],
+]
+reply_what_else_keyboard = InlineKeyboardMarkup(what_else_keyboard)
+
 """Помошник для выдачи информации если пользователь не ввел название фильма"""
 text_help = (
-    "1. Напиши мне название фильма\n"
-    "2. Я найду все фильмы связанные с этим названием\n"
-    "3. Похожие - поиск фильмов схожих по сюжету, жанрам и тп.\n"
-    "4. Далее - следующий фильм из списка.\n"
-    "5. Сохранить - сохраняет текущий выбранный фильм.\n"
-    "6. Подробнее - показывает подробную информацию."
+    "1. Напиши мне название фильма.\n"
+    "2. Я найду все фильмы связанные с этим названием.\n"
+    "3. Далее - следующий фильм из списка, если у фильма много частей или вариаций\n"
+    "4. Похожие - если интересно поискать связанные жанром временем или безумием человека что составляет подобные списки.\n"
+    "5. Сохранить - сохраняет текущий выбранный фильм. После чего можно нажать кнопку Один рандомный фильм чтобы приятно провести вечер.\n"
+    "6. Показать последние пять фильмов - коментарии излишни\n"
+    "7. Что посмотреть? - показывает список фильмов, которые сейчас популярны в мире.\n"
+    "8. Подробнее - если вдруг забыл о чем фильм который ты сохранил."
 )
 
 """
