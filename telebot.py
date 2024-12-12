@@ -44,7 +44,7 @@ async def random_film_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def main() -> None:
-    application = ApplicationBuilder().token('5376189132:AAGD207buqYz8yx8xH7EG9BSpQPrqtjW0aM').build()
+    application = ApplicationBuilder().token('YOUR_BOT_TOCKEN').build()
 
     foundfilms_handler = MessageHandler(~filters.Text("Один случайный фильм")\
                                       & ~filters.Text("Последние 5 добавленных")\
