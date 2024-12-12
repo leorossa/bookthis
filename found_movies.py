@@ -6,7 +6,7 @@ from basekeyboard import reply_rec_second_keyboard, reply_save_pon_keyboard, rep
 
 #Подключаемся к базе imdb
 tmdb = TMDb()
-tmdb.api_key = "95982a3f170dcc7789a72455024860b2"
+tmdb.api_key = "YOUR_API_KEY"
 tmdb.language = 'ru'
 movie = Movie()
 
