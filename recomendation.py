@@ -10,7 +10,7 @@ from movie_saver import savefilm
 #await context.bot.send_message(chat_id=update.effective_chat.id, text=)
 
 tmdb = TMDb()
-tmdb.api_key = "95982a3f170dcc7789a72455024860b2"
+tmdb.api_key = "YOUR_API_KEY"
 tmdb.language = 'ru'
 movie = Movie()
 
